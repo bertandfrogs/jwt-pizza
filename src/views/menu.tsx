@@ -69,7 +69,7 @@ export default function Menu() {
             onPress={() => {}}
           />
 
-          <div className="m-4 grid gap-x-8 gap-y-4 sm:gird-cols-1 md:grid-cols-2 lg:grid-cols-4 xlg:grid-cols-5">
+          <div id="menu-items" className="m-4 grid gap-x-8 gap-y-4 sm:gird-cols-1 md:grid-cols-2 lg:grid-cols-4 xlg:grid-cols-5">
             {menu.map((pizza) => (
               <button
                 key={pizza.title}
