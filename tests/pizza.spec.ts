@@ -1,6 +1,11 @@
 import { Page } from '@playwright/test';
 import { test, expect } from 'playwright-test-coverage';
 
+const adminEmail = 'a@jwt.com';
+const adminPass = 'admin';
+const franchEmail = 'b@jwt.com';
+const franchPass = '4RGk34Uk2y9JPxH';
+
 test('home page is displayed correctly', async ({ page }) => {
 	await page.goto("/");
 	expect(await page.title()).toBe('JWT Pizza');
@@ -33,7 +38,7 @@ test('log in with invalid credentials', async ({ page }) => {
 
 test('successful login and logout display correctly', async ({ page }) => {
 	// login
-	page = await login(page);
+	page = await login(page, adminEmail, adminPass);
 
 	// logout
 	await expect(page.locator('#navbar-dark')).toContainText('Logout');
@@ -42,7 +47,7 @@ test('successful login and logout display correctly', async ({ page }) => {
 });
 
 test('diner dashboard', async ({ page }) => {
-	page = await login(page);
+	page = await login(page, adminEmail, adminPass);
 
 	// navigate to dashboard
 	await page.locator('#diner-dashboard').click();
@@ -52,7 +57,11 @@ test('diner dashboard', async ({ page }) => {
 });
 
 test('order a pizza', async ({ page }) => {
-	page = await login(page);
+	page = await login(page, adminEmail, adminPass);
+	await page.goto('/');
+	
+	// make sure the page has navigated home and loaded the dashboard icon
+	await expect(page.locator('#diner-dashboard')).toBeVisible({ timeout: 10000 });
 
 	await page.getByRole('button', { name: 'Order now' }).click();
 	await page.getByRole('combobox').selectOption('1');
@@ -96,6 +105,22 @@ test('franchise non-franchisee', async ({ page }) => {
 	await expect(page.getByRole('alert')).toBeVisible();
 })
 
+test('franchise valid franchisee', async ({ page }) => {
+	page = await login(page, franchEmail, franchPass);
+
+	await page.goto("/");
+
+	// make sure the page has navigated home and loaded the dashboard icon
+	await expect(page.locator('#diner-dashboard')).toBeVisible({ timeout: 10000 });
+
+	await page.getByLabel('Global').getByRole('link', { name: 'Franchise' }).click();
+	await expect(page.getByRole('list')).toContainText('homefranchise-dashboard');
+	await expect(page.getByRole('main')).toContainText('Everything you need to run an JWT Pizza franchise. Your gateway to success.');
+	await expect(page.getByRole('button', { name: 'Create store' })).toBeVisible();
+	await page.getByRole('button', { name: 'Create store' }).click();
+	await expect(page.getByText('Create store')).toBeVisible();
+});
+
 test('about page', async ({ page }) => {
 	await page.goto('/');
 	await page.getByRole('link', { name: 'About' }).click();
@@ -111,16 +136,15 @@ test('history page', async ({ page }) => {
 })
 
 // helper function
-async function login(page: Page) {
+async function login(page: Page, email: string, password: string) {
 	await page.goto('/');
 	await page.getByRole('link', { name: 'Login' }).click();
 	await page.getByRole('textbox', { name: 'Email address' }).click();
-	await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
+	await page.getByRole('textbox', { name: 'Email address' }).fill(email);
 	await page.getByRole('textbox', { name: 'Email address' }).press('Tab');
-	await page.getByRole('textbox', { name: 'Password' }).fill('admin');
+	await page.getByRole('textbox', { name: 'Password' }).fill(password);
+	const loginResponse = page.waitForResponse('http://localhost:3000/api/auth');
 	await page.getByRole('button', { name: 'Login' }).click();
-
-	// // make sure the page has navigated home and loaded the dashboard icon
-	// await expect(page.locator('#diner-dashboard')).toBeVisible({ timeout: 10000 });
+	await loginResponse;
 	return page;
 }
