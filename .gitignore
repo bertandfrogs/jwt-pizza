@@ -15,6 +15,3 @@ node_modules/
 
 # nyc
 .nyc_output
-
-# Metrics
-/metrics
