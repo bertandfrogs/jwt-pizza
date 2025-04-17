@@ -7,20 +7,28 @@ I chose to dive a bit deeper into Amazon's Route 53. Registering a domain name a
 I found a video from an AWS conference that I enjoyed watching [AWS re:Invent 2022 - Amazon Route 53: What’s in a Domain Name? A Lot. (NET206)](https://youtu.be/mczl5zhQcYQ)
 
 One thing that I was curious about was the . at the very end of the domain name within Route 53. 
+
 ![screenshot pointing to .](domain-name-root.png)
+
 
 The presenter from Amazon explains that the . means the domain root. It's the very top level of the domain name that can directly answer queries for records stored in that zone.
 
 The next level in the domain is the top level domain:
+
 ![screenshot pointing to .net](top-level.png)
 
+
 And after that is the second level domain, which is commonly just called 'the domain name':
+
 ![screenshot underlining smalley329 and cloudfront](second-level.png)
+
 
 The second level and top level domain are what are purchased and registered through a domain name registrar. Route 53 is one of the many domain name registrars.
 
 After that, it's the third level domain:
+
 ![screenshot underlining pizza](third-level.png)
+
 
 Essentially, the third level domain is used to refer to a specific webserver within the domain, used to structure content within the website.
 
