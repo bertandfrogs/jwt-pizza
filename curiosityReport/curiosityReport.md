@@ -1,10 +1,29 @@
 # Curiosity Report: Amazon Route 53
 
 ### Introduction
-I chose to dive a bit deeper into Amazon's Route 53. Registering a domain name and setting up hosted zones piqued my interest, so I thought I would do some reading of Amazon's docs to learn a bit more about what you're able to set up within the service.
+I chose to dive a bit deeper into Amazon's Route 53. Registering a domain name and setting up hosted zones piqued my interest, so I thought I would do some reading of Amazon's docs and educational material to learn a bit more about DNS.
 
-### Health Checks
-I decided to look into how Amazon's Route 53 health checks work. Essentially, Amazon sends requests to your specified endpoint at a certain interval, and if the endpoint fails a certain number of times (specified by the user), Route 53 notifies CloudWatch. This process seems to be very similar to Grafana's alert system, and I would have found it useful to have when I was setting up my website.
+### What's in a Domain Name?
+I found a video from an AWS conference that I enjoyed watching [AWS re:Invent 2022 - Amazon Route 53: What’s in a Domain Name? A Lot. (NET206)](https://youtu.be/mczl5zhQcYQ)
 
-### CNAME Records
-While setting up JWT pizza service, I wanted to learn a bit more about creating CNAME records that route internet traffic to different AWS resources. I was intrigued to learn that it's possible to set up Route 53 resources through CloudFormation.
+One thing that I was curious about was the . at the very end of the domain name within Route 53. 
+![screenshot pointing to .](domain-name-root.png)
+
+The presenter from Amazon explains that the . means the domain root. It's the very top level of the domain name that can directly answer queries for records stored in that zone.
+
+The next level in the domain is the top level domain:
+![screenshot pointing to .net](top-level.png)
+
+And after that is the second level domain, which is commonly just called 'the domain name':
+![screenshot underlining smalley329 and cloudfront](second-level.png)
+
+The second level and top level domain are what are purchased and registered through a domain name registrar. Route 53 is one of the many domain name registrars.
+
+After that, it's the third level domain:
+![screenshot underlining pizza](third-level.png)
+
+Essentially, the third level domain is used to refer to a specific webserver within the domain, used to structure content within the website.
+
+
+### Resolving Domain Names
+Each of these domain levels have its own name server. Essentially, the root name server processes and resolves the root part of the request, passes the result and the rest of the ip to the top level domain server, and so on and so forth until the whole request is resolved.
